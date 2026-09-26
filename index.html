@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Oompa Out</title>
+<meta name="description" content="A short browser game about organizing the workers of a very magical, very exploitative candy factory.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil+Display:wght@700;900&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+<!-- @@BODY -->
+<svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="hb" width="2.2" height="2.2" patternUnits="userSpaceOnUse" patternTransform="rotate(30)"><circle class="fb" cx="1.1" cy="1.1" r=".62"/></pattern>
+    <pattern id="hp" width="2.4" height="2.4" patternUnits="userSpaceOnUse" patternTransform="rotate(-15)"><circle class="fp" cx="1.2" cy="1.2" r=".7"/></pattern>
+    <pattern id="ht" width="2.2" height="2.2" patternUnits="userSpaceOnUse" patternTransform="rotate(60)"><circle class="ft" cx="1.1" cy="1.1" r=".72"/></pattern>
+    <pattern id="hatch" width="2.4" height="2.4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="sb" x1="0" y1="0" x2="0" y2="2.4" stroke-width=".35" opacity=".45"/></pattern>
+  </defs>
+</svg>
+
+<div id="app" class="app">
+  <header class="hud" id="hud" hidden>
+    <div class="hud-row">
+      <div class="hud-day"><span class="hud-k">Day</span><strong id="hud-day">Mon</strong></div>
+      <div class="hud-meter" title="Actions left this shift">
+        <span class="hud-k">Actions</span>
+        <span class="pips pips-actions" id="hud-actions"></span>
+      </div>
+      <div class="hud-meter" title="Heat: management's attention. At 10 you're reassigned.">
+        <span class="hud-k">Heat</span>
+        <span class="pips pips-heat" id="hud-heat"></span>
+      </div>
+      <div class="hud-meter hud-union" title="Names on the Union Wall"><span class="hud-k">Union</span><strong id="hud-union">1</strong><span class="hud-of">/21</span></div>
+      <div class="hud-meter" title="Scrip: company money"><span class="hud-k">Scrip</span><strong id="hud-scrip">2</strong></div>
+      <div class="hud-disguise" id="hud-disguise" hidden title="Your Hair Toffee mustache wears off when this hits 0">Mustache <strong></strong></div>
+      <button class="btn-small" id="btn-pocket" type="button" aria-keyshortcuts="p">Pocket</button>
+    </div>
+    <p class="goal" id="goal"></p>
+  </header>
+
+  <main class="stage" id="stage" hidden>
+    <section class="view view-room" id="view-room" aria-label="Room">
+      <div class="room-bar">
+        <h1 class="room-name" id="room-name"></h1>
+        <button class="btn-small btn-map" id="btn-map" type="button" aria-keyshortcuts="m">Factory map</button>
+      </div>
+      <div class="scene-wrap"><svg class="scene" id="scene" viewBox="0 0 160 90" preserveAspectRatio="xMidYMid meet" role="group"></svg></div>
+      <ul class="hotspots" id="hotspots" aria-label="Things here"></ul>
+    </section>
+
+    <section class="view view-map" id="view-map" aria-label="Factory map" hidden>
+      <div class="room-bar">
+        <h1 class="room-name">Wonkmann's Confectionery Works</h1>
+        <button class="btn-small" id="btn-back" type="button">Back to room</button>
+      </div>
+      <div class="map-wrap" id="map"></div>
+      <p class="map-note">Going to another room costs 1 action. The higher up a room is, the more power the people in it have. You start at the bottom.</p>
+    </section>
+  </main>
+
+  <section class="panel" id="panel" aria-live="polite" hidden>
+    <div class="panel-inner">
+      <div class="lines" id="lines"></div>
+      <ol class="choices" id="choices"></ol>
+      <button class="btn-continue" id="btn-continue" type="button" hidden>Continue</button>
+    </div>
+  </section>
+
+  <!-- overlays -->
+  <section class="screen screen-title" id="screen-title">
+    <div class="poster">
+      <p class="poster-kicker">Wonkmann's Confectionery Works presents</p>
+      <h1 class="poster-title"><span>OOMPA</span><span>OUT</span></h1>
+      <p class="poster-tag">Candy gets you in. People get you through.</p>
+      <div class="poster-buttons">
+        <button class="btn-big" id="btn-new" type="button">New game</button>
+        <button class="btn-big btn-alt" id="btn-continue-save" type="button" hidden>Continue</button>
+      </div>
+      <ul class="poster-how">
+        <li>You're Nib, a stirrer in the Chocolate River Room. You have one week.</li>
+        <li>Moving and talking cost actions. Looking around is free.</li>
+        <li>Keep your Heat low. Get names on the Union Wall.</li>
+      </ul>
+      <p class="poster-foot">Playable slice: Monday and Tuesday, about 15 minutes.</p>
+    </div>
+  </section>
+
+  <section class="screen screen-pocket" id="screen-pocket" hidden aria-label="Pocket">
+    <div class="sheet">
+      <div class="sheet-head"><h2>Pocket</h2><button class="btn-small" id="btn-pocket-close" type="button">Close</button></div>
+      <div id="pocket-body"></div>
+    </div>
+  </section>
+
+  <section class="screen screen-end" id="screen-end" hidden>
+    <div class="poster" id="end-body"></div>
+  </section>
+
+  <div class="plate-stamp" id="plate-stamp" hidden></div>
+  <div class="toast" id="toast" role="status" hidden></div>
+</div>
+<!-- @@SCRIPTS -->
+<script src="vendor/ink.js"></script>
+<script src="js/story.js"></script>
+<script src="js/rooms.js"></script>
+<script src="js/core.js"></script>
+<script src="js/art.js"></script>
+<script src="js/game.js"></script>
+<!-- @@END -->
+</body>
+</html>

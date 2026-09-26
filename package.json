@@ -1,0 +1,14 @@
+{
+  "name": "oompa-out",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A short browser game about organizing the workers of a very magical, very exploitative candy factory.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "bundle": "node scripts/build.mjs && node scripts/bundle.mjs",
+    "test": "node scripts/build.mjs && node scripts/playtest.mjs"
+  },
+  "devDependencies": {
+    "inkjs": "2.4.0"
+  }
+}
